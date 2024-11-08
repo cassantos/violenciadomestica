@@ -46,15 +46,6 @@ df.drop(columns=[
 #
 df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
 
-#input_features  = [
-#       st.selectbox("Preço:",carros['buying'].unique()),
-#       st.selectbox("Manutenção:",carros['maint'].unique()),
-#       st.selectbox("Portas:",carros['doors'].unique()),
-#       st.selectbox("Capacidade de Passegeiros:",carros['persons'].unique()),
-#       st.selectbox("Porta Malas:",carros['lug_boot'].unique()),
-#       st.selectbox("Segurança:",carros['safety'].unique()),
-#       ]
-
 #df = df.loc[df['Regiao'] != 'NP']
 #df = df.loc[df['EstadoCivil'] != 'NP']
 #df = df.loc[df['TemFilhos'] != 'NP']
