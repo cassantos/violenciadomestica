@@ -10,12 +10,14 @@ import plotly.express as px
 os.system('clear')
 
 
-st.set_page_config(
-    page_title="Violência Doméstica Contra a Mulher",
-    page_icon="📈",
-    layout="wide",
-    initial_sidebar_state="expanded")
+#st.set_page_config(
+#    page_title="Violência Doméstica Contra a Mulher",
+#    page_icon="📈",
+#    layout="wide",
+#    initial_sidebar_state="expanded")
 
+st.set_page_config(page_title='Violência Doméstica Contra a Mulher', page_icon="📊", initial_sidebar_state="expanded", layout='wide')
+from streamlit.components.v1 import html
 alt.themes.enable("dark")
 
 
@@ -78,6 +80,8 @@ df = df.replace("Não Alfabetizada", "N Alfabetizada")
 
 # Ajuste do rótulo da categoria Ocupação
 df = df.replace("Empregada Doméstica", "Emp.Doméstica")
+df = df.replace("Autonoma", "Autônoma")
+
 
 # Agrupa categorias para aumentar clareza nos gráficos 
 df = df.replace("Médio", "Até o Médio")
@@ -96,8 +100,11 @@ with st.sidebar:
 
     # Lista os anos presentes na pesquisa e cria seletor acumulativo
     year_list = list(df.Ano.unique())[::-1] 
-    selected_year = st.multiselect('Selecione um ou mais anos', year_list, year_list[0])
-    
+    #st.button('Todos os anos')
+    default_year = [2021, 2019, 2017, 2013, 2015, 2011, 2009, 2007, 2005]
+    selected_year = st.multiselect('Selecione um ou mais anos', year_list, default=default_year)
+    print(selected_year)
+
     # Indexa os dados por ano
     df_selected_year = df.loc[df['Ano'].isin(selected_year)]
     df_selected_year_sorted = df_selected_year.sort_values(by="Regiao", ascending=False)
@@ -145,14 +152,43 @@ with st.sidebar:
     df_violencia_agressor = df_selected_year.groupby(['AgressorViolencia'])['SofreuViolencia'].count().reset_index()
     df_violencia_agressor = df_violencia_agressor.sort_values(by="SofreuViolencia", ascending=False)
     
+    
     # Cria seletor para categorias secundárias que serão apresentadas em tabela
     top_selector = st.radio(
-        "Top Categorias mais violentas",
+        "Top Categorias mais violentas", 
         ["Região", "Estado", "Estado Civil", "Agressor", "Etnia", "Religião/Crença", "Posicionamento Político"],
+        index=4
     )
 
+with st.container():
+    html("""
+    <script>
+        // Locate elements
+        var decoration = window.parent.document.querySelectorAll('[data-testid="stDecoration"]')[0];
+        var sidebar = window.parent.document.querySelectorAll('[data-testid="stSidebar"]')[0];
+        // Observe sidebar size
+        function outputsize() {
+            decoration.style.left = `${sidebar.offsetWidth}px`;
+        }
+        new ResizeObserver(outputsize).observe(sidebar);
+        // Adjust sizes
+        outputsize();
+        decoration.style.height = "3.0rem";
+        decoration.style.right = "45px";
+        // Adjust text decorations
+         
+        decoration.innerText = "Violência Doméstica Contra a Mulher"; // Replace with your desired text
+        decoration.style.fontWeight = "bold";
+        decoration.style.display = "flex";
+        decoration.style.justifyContent = "center";
+        decoration.style.alignItems = "center";
+        //decoration.style.fontWeight = "bold";
+        //decoration.style.backgroundImage = "none"; // Remove background image
+        //decoration.style.backgroundSize = "unset"; // Remove background size
+    </script>
+""", width=0, height=0)
 # Prepara layout do cabeçalho
-st.title('Violência Domêstica Contra a Mulher')
+#st.title('Violência Domêstica Contra a Mulher')
 st.subheader('Tipos de violência sofrida',divider=True)
 kpi = st.columns((0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), gap='small')
 
